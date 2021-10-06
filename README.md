@@ -2,9 +2,9 @@
 Demo .NET Core 5 (NET 5) Web API
 
 
-# Demo 01 - Create project
+# Demo 02 - Relationship
 ## Some steps to action
-1. Create new project with Project type: ASP.NET Core Web API, .NET Core 5
+1. Create new Model, named ```Publisher``` that related to ```Book```
 2. Create new Model, named Books
 3. Create new DbContext, named MyDBContext
 4. Install package: EF Core
