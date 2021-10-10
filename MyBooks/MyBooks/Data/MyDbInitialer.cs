@@ -24,7 +24,6 @@ namespace MyBooks.Data
                         DateRead = DateTime.Now.AddDays(-10),
                         Rate = 4,
                         Genre = "Biography",
-                        Author = "HIENLTH",
                         CoverUrl = "https....",
                         DateAdded = DateTime.Now
                     },
@@ -34,7 +33,6 @@ namespace MyBooks.Data
                         Description = "2nd Book Description",
                         IsRead = false,
                         Genre = "Biography",
-                        Author = "HIENLTH",
                         CoverUrl = "https....",
                         DateAdded = DateTime.Now
                     });

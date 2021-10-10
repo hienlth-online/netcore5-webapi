@@ -36,9 +36,10 @@ namespace MyBooks.Controllers
         [HttpPost]
         public IActionResult AddBook(BookVM book)
         {
-            _booksService.AddBook(book);
+            _booksService.AddBookWithAuthors(book);
             return Ok();
         }
+
 
         [HttpPut("{id}")]
         public IActionResult UpdateBookById(int id, BookVM book)
