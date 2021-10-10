@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using MyBooks.Data;
 using Microsoft.EntityFrameworkCore;
 using MyBooks.Data.Services;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace MyBooks
 {
@@ -33,6 +34,21 @@ namespace MyBooks
             services.AddTransient<BooksService>();
             services.AddTransient<AuthorsService>();
             services.AddTransient<PublishersService>();
+
+            services.AddApiVersioning(options => {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+
+                //options.ApiVersionReader = new HeaderApiVersionReader("custom-version-header");
+                //options.ApiVersionReader = new MediaTypeApiVersionReader("custom-version-header");
+
+                // Combine multiple ways to accept api version
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new MediaTypeApiVersionReader("custom-version-header"),
+                    new HeaderApiVersionReader("custom-version-header")
+                );
+            });
 
             services.AddSwaggerGen(c =>
             {
