@@ -73,5 +73,19 @@ namespace MyBooks.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        public IActionResult GetAllPublishers(string sortBy, string searchString, int pageNumber)
+        {
+            try
+            {
+                var _result = _publishersService.GetAllPublishers(sortBy, searchString, pageNumber);
+                return Ok(_result);
+            }
+            catch(Exception)
+            {
+                return BadRequest("Sorry, we could not load the publishers");
+            }
+        }
     }
 }

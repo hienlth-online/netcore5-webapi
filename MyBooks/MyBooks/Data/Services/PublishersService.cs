@@ -1,4 +1,5 @@
 ﻿using MyBooks.Data.Entities;
+using MyBooks.Models;
 using MyBooks.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,38 @@ namespace MyBooks.Data.Services
             {
                 throw new Exception($"The publisher with id: {id} does not exist");
             }
+        }
+
+        public List<Publisher> GetAllPublishers(string sortBy, string searchString, int? pageNumber)
+        {
+            var allPublishers = _context.Publishers.AsQueryable();
+
+            //Search
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                allPublishers = allPublishers.Where(n => n.Name.Contains(searchString));
+            }
+
+            //Sort (default)
+            allPublishers = allPublishers.OrderBy(n => n.Name);
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy)
+                {
+                    case "name_desc":
+                        allPublishers = allPublishers.OrderByDescending(n => n.Name);
+                        break;
+                    default: break;
+                }
+            }
+            
+
+            //Paging
+            int pageSize = 5;
+            var result = PaginatedList<Publisher>.Create(allPublishers, pageNumber ?? 1, pageSize);
+
+            return result;
         }
     }
 }
