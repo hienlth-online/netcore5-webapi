@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MyBooks.Controllers.v2
 {
+    [ApiVersion("2.0")]
     [Route("api/[controller]")]
     [ApiController]
-    [ApiVersion("2.0")]
     public class TestController : ControllerBase
     {
         [HttpGet]

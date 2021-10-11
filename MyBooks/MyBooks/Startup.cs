@@ -11,6 +11,7 @@ using MyBooks.Data;
 using Microsoft.EntityFrameworkCore;
 using MyBooks.Data.Services;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using System.Linq;
 
 namespace MyBooks
 {
@@ -53,6 +54,7 @@ namespace MyBooks
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyBooks", Version = "v1" });
+                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             });
         }
 

@@ -67,3 +67,9 @@ Demo .NET Core 5 (NET 5) Web API
         ```Content-Type | application/json;v=2.0```
         or:
         ```Accept | application/json;v=2.0```
+
+9. NOTED: Resolve conflict for Swagger
+	- Add option ```ResolveConflictingActions``` in servies.AddSwaggerGen():
+		```cs
+		c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+		```
