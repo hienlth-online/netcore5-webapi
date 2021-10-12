@@ -2,74 +2,46 @@
 Demo .NET Core 5 (NET 5) Web API
 
 
-# Demo 05: API Versioning
-1. Install ```Microsoft.AspNetCore.Mvc.Versioning``` package
-    ```
-    dotnet add package Microsoft.AspNetCore.Mvc.Versioning --version 5.0.0
-    ```
-2. Go to ```StartUp.cs``` and update the ```ConfigureServices``` method with the following
-    ```cs
-    services.AddApiVersioning();
-    ```
-3. Add property before ApiController
-    ```cs
-    [ApiVersion("2.0")]
-    public class BandsController : ControllerBase
-    {
-    }
-    ```
-4. You can add version for action
-    ```cs
-    [MapToApiVersion("2.0")]
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Band>> GetById20(int id)
-    {
-    }
-    ```
-5. Demo 1: Query string-base versioning
-    - Create controller ```TestController``` with 2 version and one action GET
-    - Add property [ApiVersion("2.0")] before starting class TestController
-    - Test call API:
-        - /api/Test?api-version=1.0
-        - /api/Test?api-version=2.0
-6. Demo 2: Url based versioning
-    - Create ```DemoController`` and setup route for this controller. Ex for version 1:
+# Demo 06: Web API Logging with Serilog
+1. Install Serilog package
+    - ```Serilog.AspNetCore```
+    - ```Serilog.Sinks.File``` for store log in file
+    - ```Serilog.Sinks.MSSqlServer``` for store log in database
+2. Setup logging
+    - In ```Main``` method, edit with content below:
         ```cs
-        [ApiVersion("1.0")]
-        [Route("api/v{version:apiVersion}/[controller]")]
-        [ApiController]
-        public class DemoController : ControllerBase
+        try
         {
-            [HttpGet]
-            public IActionResult Get()
-            {
-                return Ok("Demo controller version 1.0");
-            }
+            Log.Logger = new LoggerConfiguration().CreateLogger();
+            CreateHostBuilder(args).Build().Run();
+        }
+        catch
+        {
+            Log.CloseAndFlush();
         }
         ```
-    - Test API:
-        * /api/v1/Demo
-        * /api/v2/Demo
-7. Demo 3: HTTP Header based versioning
-    - Add custom:
+3. Store log in text file
+    - Step 1: Config save in one file
+        Log.Logger = new LoggerConfiguration()
+            ```.WriteTo.File("Logs/log.txt")```
+            .CreateLogger();
+    - Step 2: Register logger service in Controller, example ```PublishersController``` controller
         ```cs
-        options.ApiVersionReader = new HeaderApiVersionReader("custom-version-header");
-        ```
-    - Testing: Using ```Postman``` to test. For specific API, in ```header``` tab:
-        Add one row for ```Key | Value``` is:
-        ```custom-version-header | 2.0```
-8. Demo 4: HTTP Media-Type based versioning
-    - Add custom:
-        ```cs
-        options.ApiVersionReader = new MediaTypeApiVersionReader("custom-version-header");
-        ```
-    - Testing: Using ```Postman``` to test. For specific API, in ```header``` tab: Add one row for ```Key | Value``` is:
-        ```Content-Type | application/json;v=2.0```
-        or:
-        ```Accept | application/json;v=2.0```
+        private readonly ILogger<PublishersController> _logger;
 
-9. NOTED: Resolve conflict for Swagger
-	- Add option ```ResolveConflictingActions``` in servies.AddSwaggerGen():
-		```cs
-		c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-		```
+        public PublishersController(PublishersService publishersService, ILogger<PublishersController> logger)
+        {
+            _publishersService = publishersService;
+            _logger = logger;
+        }
+        ```
+    - Store log
+        ```cs
+        _logger.LogError(ex.Message);
+        _logger.LogInformation(JsonSerializer.Serialize(_result));
+        _logger.LogDebug("log info");
+        ```
+    - Edit file log name:
+        Log.Logger = new LoggerConfiguration()
+                    .WriteTo.File("Logs/log.txt", ```rollingInterval: RollingInterval.Day```)
+                    .CreateLogger();

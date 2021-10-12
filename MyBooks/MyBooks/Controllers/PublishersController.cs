@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MyBooks.Data.Services;
 using MyBooks.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace MyBooks.Controllers
 {
@@ -14,9 +12,12 @@ namespace MyBooks.Controllers
     public class PublishersController : ControllerBase
     {
         private PublishersService _publishersService;
-        public PublishersController(PublishersService publishersService)
+        private readonly ILogger<PublishersController> _logger;
+
+        public PublishersController(PublishersService publishersService, ILogger<PublishersController> logger)
         {
             _publishersService = publishersService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -29,6 +30,7 @@ namespace MyBooks.Controllers
             }
             catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -75,15 +77,17 @@ namespace MyBooks.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllPublishers(string sortBy, string searchString, int pageNumber)
+        public IActionResult GetAllPublishers(string sortBy, string searchString, int? pageNumber)
         {
             try
             {
                 var _result = _publishersService.GetAllPublishers(sortBy, searchString, pageNumber);
+                _logger.LogInformation(JsonSerializer.Serialize(_result));
                 return Ok(_result);
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest("Sorry, we could not load the publishers");
             }
         }
