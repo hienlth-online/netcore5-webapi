@@ -62,6 +62,8 @@ namespace MyBooks.Data.Services
 
         public List<Publisher> GetAllPublishers(string sortBy, string searchString, int? pageNumber)
         {
+            throw new Exception("This is an exception thrown from GetAllPublishers()");
+
             var allPublishers = _context.Publishers.AsQueryable();
 
             //Search

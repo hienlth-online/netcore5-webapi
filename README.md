@@ -85,3 +85,41 @@ Demo .NET Core 5 (NET 5) Web API
             .ReadFrom.Configuration(configuration)
             .CreateLogger();
         ```
+5. Store log to SQL 
+    5.1 Setup database
+    - Add entity ```Log``` table:
+        ```cs
+        public class Log
+        {
+            public int Id { get; set; }
+            public string Message { get; set; }
+            public string MessageTemplate { get; set; }
+            public string Level { get; set; }
+    
+            public DateTime TimeStamp { get; set; }
+            public string Exception { get; set; }
+            public string Properties { get; set; } //XML properties
+            public string LogEvent { get; set; }
+        }
+        ```
+    - Add dataset Log into MyDbContext:
+        ```cs
+        public DbSet<Log> Logs { get; set; }
+        ```
+    - Add migration and update database
+    
+    5.2 Config log
+    - Add config as below into ```WriteTo``` section in ```appsettings.json``` file
+        ```json
+        {
+            "Name": "MSSqlServer",
+            "Args": {
+              "connectionString": "Data Source=.;Initial Catalog=ASP5WebAPI_Book;Integrated Security=True;Pooling=False",
+              "tableName": "Logs"
+            }
+        }
+      ```
+    - Run API app and see log in database
+    
+    5.3 Config LoggerFactory to handle all exceptions in Web APIs app.
+    
