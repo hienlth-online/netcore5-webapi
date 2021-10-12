@@ -16,9 +16,15 @@ namespace MyBooks
         {
             try
             {
+                var configuration = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json")
+                    .Build();
                 Log.Logger = new LoggerConfiguration()
-                    .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day)
+                    .ReadFrom.Configuration(configuration)
                     .CreateLogger();
+                //Log.Logger = new LoggerConfiguration()
+                //    .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day)
+                //    .CreateLogger();
                 CreateHostBuilder(args).Build().Run();
             }
             catch
@@ -29,6 +35,7 @@ namespace MyBooks
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
